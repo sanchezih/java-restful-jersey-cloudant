@@ -1,19 +1,32 @@
+
 package com.sanchezih.rest.demo;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "Books")
-public class Books {
+public class Book {
 
 	private String title;
+	private String _id;
 	private String description;
 	private String year;
 	private String by;
+	private String _rev;
+
+	public String get_rev() {
+		return _rev;
+	}
+
+	public void set_rev(String _rev) {
+		this._rev = _rev;
+	}
+
 	private long likes;
 
 	public void setTitle(String String) {
 		this.title = String;
+		set_id();
 	}
 
 	public void setDescription(String String) {
@@ -30,6 +43,10 @@ public class Books {
 
 	public void setBy(String String) {
 		this.by = String;
+	}
+
+	public void set_id() {
+		this._id = title;
 	}
 
 	@XmlElement

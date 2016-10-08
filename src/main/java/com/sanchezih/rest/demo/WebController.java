@@ -1,19 +1,29 @@
+
 package com.sanchezih.rest.demo;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
+import com.cloudant.client.api.Database;
+import com.cloudant.client.api.model.Response;
+
+/*
+
+  findByIndex("\selector\": {"\_id"\: { "\$gt\": 0}},
+  Books.class,new FindByIndexOptions().
+  sort(new IndexField("title",sortOrder.asc).
+  fields("title").fields("author"));
+
+
+ */
 
 @Path("/webservice")
 public class WebController {
@@ -25,61 +35,74 @@ public class WebController {
 		return message;
 	}
 
-	@GET
-	@Path("/insert/{name}/{by}/{likes}/{year}/{description}")
+	@POST
+	@Path("/book/{name}/{by}/{likes}/{year}/{description}")
 	@Produces("text/plain")
 	public String insert(@PathParam("name") String name, @PathParam("description") String description,
 			@PathParam("likes") Long likes, @PathParam("year") String year, @PathParam("by") String by) {
-		MongoDBSingleton dbSingleton = MongoDBSingleton.getInstance();
-		DB db = dbSingleton.getTestdb();
-		DBCollection coll = db.getCollection("Books");
-		BasicDBObject doc = new BasicDBObject("title", name).append("description", description).append("likes", likes)
-				.append("year", year).append("by", by);
-		coll.insert(doc);
-		return db.isAuthenticated() + " ; " + db.getName();
+		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
+		Database db = dbSingleton.testDatabase();
+		Book book = new Book();
+		book.setTitle(name);
+		book.setDescription(description);
+		book.setLikes(likes);
+		book.setYear(year);
+		book.setBy(by);
+		Response r = db.post(book);
+		return r.getId() + " ; " + db.getDBUri();
 
 	}
 
 	@GET
-	@Path("/getRecords")
+	@Path("/records")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Books> getRecords() {
-		MongoDBSingleton dbSingleton = MongoDBSingleton.getInstance();
-		DB db = dbSingleton.getTestdb();
-		DBCollection coll = db.getCollection("Books");
-		DBCursor cursor = coll.find().sort(new BasicDBObject("by", 1));
-		List<Books> list = new ArrayList<Books>();
-		while (cursor.hasNext()) {
-			DBObject o = cursor.next();
-			Books bools = new Books();
-			bools.setTitle((String) o.get("title"));
-			bools.setDescription((String) o.get("description"));
-			bools.setYear((String) o.get("year"));
-			bools.setBy((String) o.get("by"));
-			bools.setLikes((Long) o.get("likes"));
-			list.add(bools);
-		}
+	public List<Book> getRecords() {
+		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
+		Database db = dbSingleton.testDatabase();
+
+		List<Book> list = db.findByIndex("\"selector\": { \"_id\": { \"$gt\": 0} }", Book.class);
 		return list;
 	}
 
 	@GET
-	@Path("/getRecord/{title}")
+	@Path("/record/{title}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Books> getRecordFromName(@PathParam("title") String message) {
-		MongoDBSingleton dbSingleton = MongoDBSingleton.getInstance();
-		DB db = dbSingleton.getTestdb();
-		DBCollection coll = db.getCollection("Books");
-		DBCursor cursor = coll.find(new BasicDBObject("title", message));
-		List<Books> list = new ArrayList<Books>();
-		while (cursor.hasNext()) {
-			DBObject o = cursor.next();
-			Books bools = new Books();
-			bools.setTitle((String) o.get("title"));
-			bools.setDescription((String) o.get("description"));
-			bools.setYear((String) o.get("year"));
-			bools.setBy((String) o.get("by"));
-			list.add(bools);
-		}
+	public List<Book> getRecordFromName(@PathParam("title") String message) {
+		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
+		Database db = dbSingleton.testDatabase();
+		List<Book> list = db.findByIndex("\"selector\": {\"title\": \"" + message + "\" }", Book.class);
 		return list;
 	}
+
+	@PUT
+	@Path("/book/{title}/{likes}")
+	@Produces("text/plain")
+	public String update(@PathParam("title") String title, @PathParam("likes") long likes) {
+		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
+		Database db = dbSingleton.testDatabase();
+		try {
+			Book book = db.find(Book.class, title);
+			book.setLikes(book.getLikes() + likes);
+			Response r = db.update(book);
+			return r.getId() + " updated likes to " + book.getLikes();
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+
+	}
+
+	@DELETE
+	@Path("/book/{title}")
+	@Produces("text/plain")
+	public String delete(@PathParam("title") String title) {
+		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
+		Database db = dbSingleton.testDatabase();
+		try {
+			Book book = db.find(Book.class, title);
+			db.remove(book);
+		} catch (Exception e) {
+		}
+		return title + " deleted";
+	}
+
 }
