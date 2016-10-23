@@ -29,7 +29,7 @@ public class BookResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Book> getRecords() {
+	public List<Book> getBooks() {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
 
@@ -40,7 +40,7 @@ public class BookResource {
 	@POST
 	@Path("/book/{name}/{by}/{likes}/{year}/{description}")
 	@Produces("text/plain")
-	public String insert(@PathParam("name") String name, @PathParam("description") String description,
+	public String addBook(@PathParam("name") String name, @PathParam("description") String description,
 			@PathParam("likes") Long likes, @PathParam("year") String year, @PathParam("by") String by) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
@@ -55,9 +55,9 @@ public class BookResource {
 	}
 
 	@GET
-	@Path("/record/{title}")
+	@Path("/{title}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Book> getRecordFromName(@PathParam("title") String message) {
+	public List<Book> getBookByName(@PathParam("title") String message) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
 		List<Book> list = db.findByIndex("\"selector\": {\"title\": \"" + message + "\" }", Book.class);
@@ -78,11 +78,10 @@ public class BookResource {
 		} catch (Exception e) {
 			return e.getMessage();
 		}
-
 	}
 
 	@DELETE
-	@Path("/book/{title}")
+	@Path("/{title}")
 	@Produces("text/plain")
 	public String delete(@PathParam("title") String title) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
