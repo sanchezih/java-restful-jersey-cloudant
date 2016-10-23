@@ -1,5 +1,5 @@
 
-package com.sanchezih.rest.demo;
+package com.sanchezih.rest.resources;
 
 import java.util.List;
 
@@ -14,25 +14,27 @@ import javax.ws.rs.core.MediaType;
 
 import com.cloudant.client.api.Database;
 import com.cloudant.client.api.model.Response;
+import com.sanchezih.rest.demo.CloudantDBSingleton;
+import com.sanchezih.rest.entities.Book;
 
-/*
-
-  findByIndex("\selector\": {"\_id"\: { "\$gt\": 0}},
-  Books.class,new FindByIndexOptions().
-  sort(new IndexField("title",sortOrder.asc).
-  fields("title").fields("author"));
-
-
- */
-
-@Path("/webservice")
-public class WebController {
+@Path("/books")
+public class BookResource {
 
 	@GET
 	@Path("/echo/{message}")
 	@Produces("text/plain")
 	public String showMsg(@PathParam("message") String message) {
 		return message;
+	}
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Book> getRecords() {
+		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
+		Database db = dbSingleton.testDatabase();
+
+		List<Book> list = db.findByIndex("\"selector\": { \"_id\": { \"$gt\": 0} }", Book.class);
+		return list;
 	}
 
 	@POST
@@ -50,18 +52,6 @@ public class WebController {
 		book.setBy(by);
 		Response r = db.post(book);
 		return r.getId() + " ; " + db.getDBUri();
-
-	}
-
-	@GET
-	@Path("/records")
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Book> getRecords() {
-		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
-		Database db = dbSingleton.testDatabase();
-
-		List<Book> list = db.findByIndex("\"selector\": { \"_id\": { \"$gt\": 0} }", Book.class);
-		return list;
 	}
 
 	@GET

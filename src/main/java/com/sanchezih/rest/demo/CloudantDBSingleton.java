@@ -1,4 +1,3 @@
-
 package com.sanchezih.rest.demo;
 
 import com.cloudant.client.api.CloudantClient;
@@ -22,7 +21,6 @@ public class CloudantDBSingleton {
 			cDbSingleton = new CloudantDBSingleton();
 		}
 		return cDbSingleton;
-
 	}
 
 	public Database testDatabase() {
@@ -40,9 +38,7 @@ public class CloudantDBSingleton {
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-
 		}
 		return db;
 	}
-
 }
