@@ -3,8 +3,8 @@ package com.sanchezih.rest.entities;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name = "Books")
-public class Book {
+@XmlRootElement(name = "Libros")
+public class Libro {
 
 	private String title;
 	private String _id;
@@ -72,4 +72,5 @@ public class Book {
 	public String getBy() {
 		return this.by;
 	}
+
 }

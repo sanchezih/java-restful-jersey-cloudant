@@ -15,10 +15,10 @@ import javax.ws.rs.core.MediaType;
 import com.cloudant.client.api.Database;
 import com.cloudant.client.api.model.Response;
 import com.sanchezih.rest.demo.CloudantDBSingleton;
-import com.sanchezih.rest.entities.Book;
+import com.sanchezih.rest.entities.Libro;
 
 @Path("/books")
-public class BookResource {
+public class LibroResource {
 
 	@GET
 	@Path("/echo/{message}")
@@ -29,11 +29,11 @@ public class BookResource {
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Book> getBooks() {
+	public List<Libro> getBooks() {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
 
-		List<Book> list = db.findByIndex("\"selector\": { \"_id\": { \"$gt\": 0} }", Book.class);
+		List<Libro> list = db.findByIndex("\"selector\": { \"_id\": { \"$gt\": 0} }", Libro.class);
 		return list;
 	}
 
@@ -44,7 +44,7 @@ public class BookResource {
 			@PathParam("likes") Long likes, @PathParam("year") String year, @PathParam("by") String by) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
-		Book book = new Book();
+		Libro book = new Libro();
 		book.setTitle(name);
 		book.setDescription(description);
 		book.setLikes(likes);
@@ -57,10 +57,10 @@ public class BookResource {
 	@GET
 	@Path("/{title}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Book> getBookByName(@PathParam("title") String message) {
+	public List<Libro> getBookByName(@PathParam("title") String message) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
-		List<Book> list = db.findByIndex("\"selector\": {\"title\": \"" + message + "\" }", Book.class);
+		List<Libro> list = db.findByIndex("\"selector\": {\"title\": \"" + message + "\" }", Libro.class);
 		return list;
 	}
 
@@ -71,7 +71,7 @@ public class BookResource {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
 		try {
-			Book book = db.find(Book.class, title);
+			Libro book = db.find(Libro.class, title);
 			book.setLikes(book.getLikes() + likes);
 			Response r = db.update(book);
 			return r.getId() + " updated likes to " + book.getLikes();
@@ -87,7 +87,7 @@ public class BookResource {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
 		try {
-			Book book = db.find(Book.class, title);
+			Libro book = db.find(Libro.class, title);
 			db.remove(book);
 		} catch (Exception e) {
 		}

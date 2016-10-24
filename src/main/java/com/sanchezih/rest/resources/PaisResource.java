@@ -11,38 +11,38 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.sanchezih.rest.demo.CountryService;
-import com.sanchezih.rest.entities.Country;
+import com.sanchezih.rest.demo.PaisService;
+import com.sanchezih.rest.entities.Pais;
 
 @Path("/countries")
-public class CountryResource {
+public class PaisResource {
 
-	CountryService countryService = new CountryService();
+	PaisService countryService = new PaisService();
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Country> getCountries() {
+	public List<Pais> getCountries() {
 
-		List<Country> listOfCountries = countryService.getAllCountries();
+		List<Pais> listOfCountries = countryService.getAllCountries();
 		return listOfCountries;
 	}
 
 	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Country getCountryById(@PathParam("id") int id) {
+	public Pais getCountryById(@PathParam("id") int id) {
 		return countryService.getCountry(id);
 	}
 
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Country addCountry(Country country) {
+	public Pais addCountry(Pais country) {
 		return countryService.addCountry(country);
 	}
 
 	@PUT
 	@Produces(MediaType.APPLICATION_JSON)
-	public Country updateCountry(Country country) {
+	public Pais updateCountry(Pais country) {
 		return countryService.updateCountry(country);
 
 	}
