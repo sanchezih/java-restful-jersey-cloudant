@@ -6,59 +6,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "Libros")
 public class Libro {
 
-	private String titulo;
 	private String _id;
-	private String descripcion;
-	private String anio;
-	private String autor;
 	private String _rev;
+	private String titulo;
+	private String description;
+	private String year;
+	private String by;
 
-	@XmlElement
-	public String getTitulo() {
-		return titulo;
-	}
-
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
-
-	@XmlElement
-	public String get_id() {
-		return _id;
-	}
-
-	public void set_id(String _id) {
-		this._id = _id;
-	}
-
-	@XmlElement
-	public String getDescripcion() {
-		return descripcion;
-	}
-
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
-	}
-
-	@XmlElement
-	public String getAnio() {
-		return anio;
-	}
-
-	public void setAnio(String anio) {
-		this.anio = anio;
-	}
-
-	@XmlElement
-	public String getAutor() {
-		return autor;
-	}
-
-	public void setAutor(String autor) {
-		this.autor = autor;
-	}
-
-	@XmlElement
 	public String get_rev() {
 		return _rev;
 	}
@@ -67,4 +21,55 @@ public class Libro {
 		this._rev = _rev;
 	}
 
+	private long likes;
+
+	public void setTitle(String titulo) {
+		this.titulo = titulo;
+		set_id();
+	}
+
+	public void setDescription(String String) {
+		this.description = String;
+	}
+
+	public void setLikes(long String) {
+		this.likes = String;
+	}
+
+	public void setYear(String String) {
+		this.year = String;
+	}
+
+	public void setBy(String String) {
+		this.by = String;
+	}
+
+	public void set_id() {
+		this._id = titulo;
+	}
+
+	@XmlElement
+	public String getTitulo() {
+		return this.titulo;
+	}
+
+	@XmlElement
+	public String getDescription() {
+		return this.description;
+	}
+
+	@XmlElement
+	public long getLikes() {
+		return this.likes;
+	}
+
+	@XmlElement
+	public String getYear() {
+		return this.year;
+	}
+
+	@XmlElement
+	public String getBy() {
+		return this.by;
+	}
 }

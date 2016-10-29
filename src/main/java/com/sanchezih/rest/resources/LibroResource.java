@@ -37,46 +37,46 @@ public class LibroResource {
 	}
 
 	@POST
-	@Path("/{titulo}/{autor}/{likes}/{anio}/{descripcion}")
+	@Path("/{name}/{by}/{likes}/{year}/{description}")
 	@Produces("text/plain")
-	public String addLibro(@PathParam("titulo") String titulo, @PathParam("descripcion") String descripcion,
-			@PathParam("likes") Long likes, @PathParam("year") String year, @PathParam("autor") String autor) {
-
+	public String insert(@PathParam("name") String name, @PathParam("description") String description,
+			@PathParam("likes") Long likes, @PathParam("year") String year, @PathParam("by") String autor) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
+		Libro book = new Libro();
+		book.setTitle(name);
+		book.setDescription(description);
+		book.setLikes(likes);
+		book.setYear(year);
+		book.setBy(autor);
+		Response r = db.post(book);
+		return "El libro " + r.getId() + " fue creado en " + db.getDBUri();
 
-		Libro libro = new Libro();
-		libro.setTitle(titulo);
-		libro.setDescription(descripcion);
-		libro.setLikes(likes);
-		libro.setYear(year);
-		libro.setBy(autor);
-
-		Response r = db.post(libro);
-		return r.getId() + " ; " + db.getDBUri();
 	}
 
 	@GET
 	@Path("/{titulo}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Libro> getBookByName(@PathParam("titulo") String message) {
+	public List<Libro> getLibroByTitulo(@PathParam("titulo") String titulo) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
-		List<Libro> list = db.findByIndex("\"selector\": {\"title\": \"" + message + "\" }", Libro.class);
-		return list;
+		List<Libro> libros = db.findByIndex("\"selector\": {\"titulo\": \"" + titulo + "\" }", Libro.class);
+		return libros;
 	}
 
 	@PUT
-	@Path("/libro/{titulo}/{likes}")
+	@Path("/{titulo}/{likes}")
 	@Produces("text/plain")
-	public String update(@PathParam("titulo") String titulo, @PathParam("likes") long likes) {
+	public String updateLibro(@PathParam("titulo") String titulo, @PathParam("likes") long likes) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
+
 		try {
 			Libro libro = db.find(Libro.class, titulo);
 			libro.setLikes(libro.getLikes() + likes);
+
 			Response r = db.update(libro);
-			return r.getId() + " updated likes to " + libro.getLikes();
+			return "Los likes de " + r.getId() + " se incrementaron a " + libro.getLikes();
 		} catch (Exception e) {
 			return e.getMessage();
 		}
@@ -85,15 +85,16 @@ public class LibroResource {
 	@DELETE
 	@Path("/{titulo}")
 	@Produces("text/plain")
-	public String delete(@PathParam("titulo") String title) {
+	public String deleteLibro(@PathParam("titulo") String titulo) {
 		CloudantDBSingleton dbSingleton = CloudantDBSingleton.getInstance();
 		Database db = dbSingleton.testDatabase();
 		try {
-			Libro book = db.find(Libro.class, title);
-			db.remove(book);
+			Libro libro = db.find(Libro.class, titulo);
+			db.remove(libro);
 		} catch (Exception e) {
+			return e.getMessage();
 		}
-		return title + " deleted";
+		return "El libro " + titulo + " ha sido borrado";
 	}
 
 }
