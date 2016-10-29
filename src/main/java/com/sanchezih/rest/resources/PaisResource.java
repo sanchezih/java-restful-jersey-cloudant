@@ -11,47 +11,40 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.sanchezih.rest.demo.PaisService;
-import com.sanchezih.rest.entities.Pais;
+import com.sanchezih.rest.model.Pais;
+import com.sanchezih.rest.services.PaisService;
 
-@Path("/countries")
+@Path("/paises")
+@Produces(MediaType.APPLICATION_JSON)
 public class PaisResource {
 
-	PaisService countryService = new PaisService();
+	private PaisService paisService = new PaisService();
 
 	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	public List<Pais> getCountries() {
-
-		List<Pais> listOfCountries = countryService.getAllCountries();
-		return listOfCountries;
+	public List<Pais> getPaises() {
+		return paisService.getAllPaises();
 	}
 
 	@GET
 	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public Pais getCountryById(@PathParam("id") int id) {
-		return countryService.getCountry(id);
+		return paisService.getCountry(id);
 	}
 
 	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	public Pais addCountry(Pais country) {
-		return countryService.addCountry(country);
+	public Pais addCountry(Pais pais) {
+		return paisService.addPais(pais);
 	}
 
 	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
-	public Pais updateCountry(Pais country) {
-		return countryService.updateCountry(country);
-
+	public Pais updateCountry(Pais pais) {
+		return paisService.updatePais(pais);
 	}
 
 	@DELETE
 	@Path("/{id}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public void deleteCountry(@PathParam("id") int id) {
-		countryService.deleteCountry(id);
+		paisService.deleteCountry(id);
 
 	}
 

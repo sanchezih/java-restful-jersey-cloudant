@@ -1,9 +1,10 @@
-package com.sanchezih.rest.demo;
+package com.sanchezih.rest.database;
 
 import com.cloudant.client.api.CloudantClient;
 import com.cloudant.client.api.Database;
 
 public class CloudantDBSingleton {
+
 	private static CloudantClient cloudantClient;
 	private static CloudantDBSingleton cDbSingleton;
 	private static Database db;
@@ -16,7 +17,6 @@ public class CloudantDBSingleton {
 	};
 
 	public static CloudantDBSingleton getInstance() {
-
 		if (cDbSingleton == null) {
 			cDbSingleton = new CloudantDBSingleton();
 		}
@@ -30,7 +30,6 @@ public class CloudantDBSingleton {
 			} catch (Exception e) {
 				// TODO: handle exception
 			}
-
 		}
 		if (db == null) {
 			try {
